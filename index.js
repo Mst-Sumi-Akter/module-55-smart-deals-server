@@ -30,6 +30,8 @@ async function run() {
 
     const db = client.db('smart_db')
     const productsCollection = db.collection('products');
+    //for bid
+    const bidsCollection = db.collection('bids');
     //insert
     app.post('/products', async(req,res)=>{
       const newProduct = req.body;
@@ -88,6 +90,37 @@ async function run() {
       const result = await productsCollection.deleteOne(query);
       res.send(result);
     })
+
+    //bisc related api
+    app.get('/bids', async(req,res)=>{
+      //for check email  http://localhost:3000/bids?email=ahnaf.rahman@example.com
+      const email = req.query.email;
+      const query={};
+      if(email){
+        query.buyer_email=email;
+      }
+      const cursor = bidsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    //for bids
+    app.post('/bids', async(req,res)=>{
+      const newBid = req.body;
+      const result =await bidsCollection.insertOne(newBid);
+      res.send(result);
+    })
+
+    // for bid
+     app.delete('/bids/:id', async(req,res)=>{
+      const id =req.params.id;
+      const query = { _id: new ObjectId(id)}
+      const result = await bidsCollection.deleteOne(query);
+      res.send(result);
+    })
+
+
+
 
 
     // Send a ping to confirm a successful connection
