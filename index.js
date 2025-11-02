@@ -38,9 +38,20 @@ async function run() {
     })
 
     //get all data
-
+    // limit dara bojhay koyta eliment porjonto nite hobe
+    // skip dara bojhay koyta skip kore ami data dakhabo
     app.get('/products',async(req,res)=>{
-      const cursor = productsCollection.find();
+      // const projectFields = {title:1 , price_min:1, price_max:1, image:1}     //jgulo show korabo shegula 1 dite hbe r 0 hole sheta dakhabe na hardly  r aita use na korle shob element dakhabe
+      // const cursor = productsCollection.find().sort({price_min:-1}).skip(2).limit(2).project(projectFields);
+
+      //emailaddress die filter kore data dakhar jonno  address like http://localhost:3000/products?email=john.smith@example.com
+      console.log(req,res)
+      const email = req.query.email;
+      const query = {}
+      if (email){
+        query.email=email;
+      }
+      const cursor = productsCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     })
