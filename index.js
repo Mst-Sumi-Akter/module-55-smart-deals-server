@@ -32,6 +32,28 @@ async function run() {
     const productsCollection = db.collection('products');
     //for bid
     const bidsCollection = db.collection('bids');
+   // for users collection
+   const usersCollection = db.collection('users');
+
+   //insert for user
+    
+        app.post('/users', async (req, res) => {
+            const newUser = req.body;
+            const email = req.body.email;
+            const query = { email: email }
+            const existingUser = await usersCollection.findOne(query);
+            
+            if (existingUser) {
+                res.send({message: 'user already exits. do not need to insert again'})
+            }
+            else {
+                const result = await usersCollection.insertOne(newUser);
+                res.send(result);
+            }
+        })
+  
+
+
     //insert
     app.post('/products', async(req,res)=>{
       const newProduct = req.body;
