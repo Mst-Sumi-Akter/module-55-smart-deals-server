@@ -1,8 +1,10 @@
 const express = require('express')
 const cors = require('cors')
+require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port =process.env.PORT || 3000 ;
+// console.log(process.env)
 
 // middleware
 app.use(cors()) // to send request from frontend to server
@@ -12,7 +14,11 @@ app.use(express.json());   //to help handle json data on server site
 //smartdbUser
 
 
-const uri = "mongodb+srv://smartdbUser:9ZShLd9UDhHK34G7@cluster0.ztnzz8f.mongodb.net/?appName=Cluster0";
+//const uri = "mongodb+srv://smartdbUser:9ZShLd9UDhHK34G7@cluster0.ztnzz8f.mongodb.net/?appName=Cluster0";
+
+
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ztnzz8f.mongodb.net/?appName=Cluster0`;
+
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -131,6 +137,7 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+      
 
     //for bids
     app.post('/bids', async(req,res)=>{
@@ -138,6 +145,13 @@ async function run() {
       const result =await bidsCollection.insertOne(newBid);
       res.send(result);
     })
+      app.get('/products/bids/:productId', async (req, res) => {
+            const productId = req.params.productId;
+            const query = { product: productId }
+            const cursor = bidsCollection.find(query).sort({ bid_price: -1 })
+            const result = await cursor.toArray();
+            res.send(result);
+        })
 
     // for bid
      app.delete('/bids/:id', async(req,res)=>{
